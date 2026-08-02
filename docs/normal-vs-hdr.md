@@ -26,19 +26,25 @@
 
 | Symptom | Likely path | Fix direction |
 |---------|-------------|-----------------|
-| HDR toggle freezes game | X11/XWayland | unset DISPLAY, winewayland |
+| HDR toggle freezes game | X11/XWayland (normal path) | unset DISPLAY, winewayland HDR launch |
 | Image never looks HDR | XWayland or compositor HDR off | enable HDR in DE; confirm Wine env |
 | Sticky Alt / weird walk | winewayland | try normal launch or careful focus habits |
 | Ship spins while alt-tabbed | `IgnoreWindowFocus=1` | set to `0` |
 | SDR launch broken after HDR session | leftover `HDR=1` in attributes | normal launch must force `HDR=0` |
 
+## In-game enable / disable (once HDR launch is correct)
+
+With a proper **HDR launch**, the graphics-menu **HDR on/off** control works as expected: you can switch between true HDR and SDR presentation without relaunching. That is a good smoke test that winewayland + compositor HDR are actually wired up.
+
+What fails is using that checkbox as a substitute for the HDR **launcher** while still on normal/X11.
+
 ## Why both paths exist
 
 HDR is a **presentation + Wine backend** choice, not a single checkbox.  
 Normal path optimizes for **input reliability**.  
-HDR path optimizes for **correct color/brightness pipeline**.
+HDR path optimizes for **correct color/brightness pipeline** (and then the in-game toggle is free to use).
 
 Many of us keep **both** launchers:
 
 - Daily / competitive feel → normal  
-- Pretty space + OLED/min-LED panels → HDR  
+- Pretty space + OLED/min-LED panels → HDR (toggle HDR off in-menu if you want SDR without leaving the session)

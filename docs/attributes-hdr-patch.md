@@ -11,9 +11,10 @@ Star Citizen stores many graphics flags in the profile file:
 
 Important behaviors we hit:
 
-1. **In-game “HDR” checkbox is not enough** on Linux if Wine is still on XWayland—and toggling it there can freeze.
-2. The file is read when the **client** starts. Changing it after the game is already up often does nothing until restart.
-3. If you last used **HDR launch** (`HDR=1`) and next time you use **normal/SDR launch** without clearing the flag, SDR sessions can misbehave. So **both** paths should rewrite the file deliberately.
+1. On the **normal / X11** path, the in-game **HDR** checkbox is not enough (and toggling it can freeze). The presentation stack is wrong even if the box is ticked.
+2. On a **proper HDR launch** (winewayland, compositor HDR on, `DXVK_HDR=1`), that same **enable/disable** control works fine mid-session to switch between HDR and SDR modes. Pre-patching is about boot defaults and path hygiene, not “never use the menu.”
+3. The file is read when the **client** starts. Changing attributes on disk after the game is already up often does nothing until restart.
+4. If you last used **HDR launch** (`HDR=1`) and next time you use **normal/SDR launch** without clearing the flag, SDR sessions can misbehave. So **both** paths should rewrite the file deliberately.
 
 Therefore the launcher script **edits `attributes.xml` on disk before** RSI Launcher starts the game.
 

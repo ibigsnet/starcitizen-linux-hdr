@@ -19,7 +19,7 @@ This is **not** an official CIG or LUG guide. It documents what broke for us whe
 | Path | How | HDR result |
 |------|-----|------------|
 | **Normal** (`sc-launch.sh`) | Keep `DISPLAY` → Wine X11 / XWayland | Stable keyboard; **in-game HDR often wrong or freezes** |
-| **HDR** (`sc-launch-hdr.sh`) | `SC_HDR=1` → **unset `DISPLAY`** → winewayland | **Real HDR** if compositor HDR is on; keyboard can be stickier |
+| **HDR** (`sc-launch-hdr.sh`) | `SC_HDR=1` → **unset `DISPLAY`** → winewayland | **Real HDR** if compositor HDR is on; **in-game enable/disable works**; keyboard can be stickier |
 
 ## Repo layout
 
@@ -38,8 +38,8 @@ starcitizen-linux-hdr/
 ## Topics covered for other users
 
 1. **Normal vs HDR launch** — keep `DISPLAY` (X11) vs unset `DISPLAY` (winewayland).  
-2. **Pre-launch `attributes.xml` patch** — force `HDR=1` (and clear it on SDR) so the client boots correctly; don’t rely only on the in-game toggle.  
-3. **Wine System Tray** — hide the floating tray / task icon; **never close** it or RSI Launcher may crash.  
+2. **Pre-launch `attributes.xml` patch** — force `HDR=1` (and clear it on SDR) for a clean boot; on a proper HDR launch, the **in-game enable/disable** toggle then works fine for mode switching.  
+3. **Wine System Tray** — hide the floating tray / task icon; **never close** it (HWND crash risk, and full exit if RSI “exit on close” is on).  
 4. **Alt-tab mouse** — `IgnoreWindowFocus=0`.  
 5. **Sticky Alt / keyboard** — tradeoff of winewayland vs X11.
 

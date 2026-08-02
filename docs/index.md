@@ -35,7 +35,7 @@ What we observed:
 | **IgnoreWindowFocus** | Prefer **`0`** (don’t keep reading mouse when alt-tabbed) | same |
 | **Keyboard** | Better under Wine X11 | Can get **sticky Alt / modifiers** on winewayland |
 | **Gamescope** | Optional separate script | Optional; pure HDR path does **not** need gamescope |
-| **In-game HDR** | Often broken / freezes | Works when compositor + winewayland are correct |
+| **In-game HDR toggle** | Often broken / freezes | **Works** — enable/disable between HDR and SDR freely once this path is correct |
 
 ### Mental model
 
@@ -107,7 +107,11 @@ export DXVK_HDR=1
 
 ### 4. Patch `attributes.xml` **before** RSI Launcher starts the game
 
-This is a core workaround: **do not rely on toggling HDR only inside the client** after boot on Linux.
+We still pre-set `HDR=1` so the client **boots** on the HDR path with a known-good flag (and normal launch forces `HDR=0` so leftover HDR sessions do not break SDR).
+
+That is separate from the **in-game** checkbox: once you are already on a **proper HDR launch** (winewayland + compositor HDR + `DXVK_HDR=1`), the graphics-menu **enable/disable HDR** toggle works fine to switch presentation modes without needing a relaunch.
+
+What does *not* work: relying on that same in-game toggle alone under the **normal / X11** path — that is where freezes and fake-SDR “HDR” showed up for us.
 
 Star Citizen reads profile graphics flags from disk when the **game client** starts, for example:
 
@@ -156,7 +160,7 @@ On HDR/winewayland especially, Wine often shows a floating **“Wine System Tray
 | Minimize / skip taskbar / opacity 0 via **KWin window rule** | Click the tray window’s **X** / destroy the window |
 | Re-apply hide a few seconds after Electron starts (tray is late) | `kill` explorer / tray process in the prefix |
 
-**Why:** Closing that tray window can destroy HWNDs Electron still uses → **RSI Launcher hard-crashes**. Hiding keeps the process and HWND alive.
+**Why:** Closing that tray window can destroy HWNDs Electron still uses → **RSI Launcher hard-crashes**. It can also tear down the whole session if you have **exit Star Citizen / RSI Launcher on close** enabled in the launcher settings. Hiding keeps the process and HWND alive; there is no sound.
 
 We schedule delayed hide passes (e.g. 2s, 5s, 10s, …) after launch and keep a permanent KWin rule for title `Wine System Tray`.
 
@@ -182,7 +186,8 @@ Same as LUG: run `RSI Launcher.exe` from the prefix **after** env + attributes +
 
 - Desktop looks HDR-capable (bright UI, PQ/HDR curve on the panel).
 - In SC graphics options, HDR is on and peak brightness matches your panel (e.g. ~1000 nits).
-- If the image looks like a flat SDR image with a “HDR” checkbox, you are probably still on XWayland — re-check that **`DISPLAY` is unset** for the Wine tree.
+- **Toggle test:** with a proper HDR launch, you can **enable and disable HDR in the menu** and switch between true HDR and SDR presentation cleanly. If enable freezes or never looks right, you are almost certainly still on the normal/XWayland path.
+- If the image looks like a flat SDR image with a “HDR” checkbox, re-check that **`DISPLAY` is unset** for the Wine tree.
 
 ---
 
@@ -235,11 +240,6 @@ Notes from our machine:
 - Prefer pinning by **geometry** (largest landscape output), not `screen=0`.
 - Launchers (RSI) need not be forced; only the game client.
 
-### Scroll wheel dead after closing the game
-
-- Desktop “game mouse mode” (disable middle-button scroll tricks for Corsair) must only apply while **`StarCitizen.exe`** runs — **not** while only RSI Launcher is open.
-- After client exit, restore desktop scroll even if the launcher stays up.
-
 ---
 
 ## Minimal reproduction matrix for other users
@@ -249,7 +249,8 @@ Notes from our machine:
 | Normal launch, HDR off in game | Stable play, SDR |
 | Normal launch, turn HDR on in game | Often freeze or no real HDR |
 | HDR launch, compositor HDR on | Real HDR image |
-| HDR launch with `DISPLAY` still set | Behaves like normal (no real HDR) |
+| HDR launch, disable then re-enable HDR in menu | Works cleanly (true mode switch on winewayland) |
+| HDR launch with `DISPLAY` still set | Behaves like normal (no real HDR / toggle may freeze) |
 | Alt-tab with `IgnoreWindowFocus=0` | Mouse does not turn ship |
 | Alt-tab with `IgnoreWindowFocus=1` | Mouse still turns ship |
 

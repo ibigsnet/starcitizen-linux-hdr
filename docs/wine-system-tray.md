@@ -14,9 +14,9 @@ That is **not** the RSI Launcher window itself. It is Wine’s tray host (`explo
 
 | Approach | Result |
 |----------|--------|
-| **Close / kill the tray window** | Can destroy HWNDs Electron still needs → **RSI Launcher FATAL / instant exit** |
+| **Close / kill the tray window** | Can destroy HWNDs Electron still needs → **RSI Launcher FATAL / instant exit**. Also risky if **exit Star Citizen / RSI Launcher on close** is enabled in launcher settings — a close can take down the whole session, not only the tray UI. |
 | **Kill `explorer.exe` in the prefix** | Same class of breakage |
-| **Hide only (minimize, skip taskbar, opacity 0)** | Tray process stays alive; UI clutter gone; launcher stays stable |
+| **Hide only (minimize, skip taskbar, opacity 0)** | Tray process stays alive; UI clutter gone; launcher (and game) stay stable |
 
 So the workaround is: **hide, never destroy**.
 
@@ -73,7 +73,7 @@ With **`DISPLAY` unset** (winewayland), tray / desktop integration can surface d
 ## User-facing FAQ
 
 **Q: Is it safe to click the X on “Wine System Tray”?**  
-**A:** Avoid it. Closing that window has crashed RSI Launcher for us. Use the hide rule instead.
+**A:** Avoid it. Closing that window has crashed RSI Launcher for us (HWND teardown). If you also have **exit Star Citizen / RSI Launcher on close** enabled in RSI Launcher settings, a close can exit the launcher and game entirely—not just the tray. Use the hide rule instead.
 
 **Q: Does hiding the tray disable RSI notifications?**  
 **A:** Tray UI is suppressed; the launcher process remains. You still use the main RSI Launcher window.

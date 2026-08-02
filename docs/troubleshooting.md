@@ -6,17 +6,19 @@
 2. Confirm the **Wine process** has **no** `DISPLAY` in its environment when using the HDR launcher.  
 3. Confirm `DXVK_HDR=1`.  
 4. Confirm `attributes.xml` has `HDR=1` **before** starting the client (see [attributes-hdr-patch.md](attributes-hdr-patch.md)).  
-5. Avoid “enable HDR only inside the game” on the **normal** X11 path — that is where freezes showed up for us.
+5. Avoid “enable HDR only inside the game” on the **normal** X11 path — that is where freezes showed up for us. On a **proper HDR launch**, the same enable/disable control works fine.
 
 ## Floating “Wine System Tray” / extra task icon
 
 - **Hide** it (KWin rule: minimize, skip taskbar, opacity 0).  
-- **Do not close** it — can crash RSI Launcher (HWND).  
+- **Do not close** it — can crash RSI Launcher (HWND teardown), and can fully exit launcher/game if **exit Star Citizen / RSI Launcher on close** is enabled in launcher settings.  
 - Details: [wine-system-tray.md](wine-system-tray.md).
 
 ## Freezes when enabling HDR in-game
 
-Classic sign of **XWayland + HDR toggle**. Use the HDR launcher (winewayland) instead of flipping HDR on a normal session.
+Classic sign of **XWayland + HDR toggle** on the **normal** path. Use the HDR launcher (winewayland) instead.
+
+Once you are already on that HDR launch, **enable/disable in the graphics menu is fine** and is a good way to switch modes without restarting.
 
 ## Sticky modifiers (Alt walk inverted, etc.)
 
@@ -28,11 +30,6 @@ Classic sign of **XWayland + HDR toggle**. Use the HDR launcher (winewayland) in
 
 `IgnoreWindowFocus` must be `0`.  
 If it is `1`, SC intentionally keeps input while unfocused.
-
-## Scroll wheel dead after closing SC
-
-Desktop “game mouse” tweaks (e.g. Corsair middle-button scroll) must apply only while **`StarCitizen.exe`** runs — not while only **RSI Launcher** is open.  
-Restore desktop scroll when the client exits even if the launcher stays up.
 
 ## Wrong monitor
 
