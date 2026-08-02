@@ -25,13 +25,23 @@ This is **not** an official CIG or LUG guide. It documents what broke for us whe
 
 ```text
 starcitizen-linux-hdr/
-  README.md              ← you are here
+  README.md                 ← you are here
   docs/
-    index.md             ← main GitHub Pages article
-    normal-vs-hdr.md     ← comparison table (deep)
-    troubleshooting.md   ← sticky keys, alt-tab mouse, monitors
+    index.md                ← main GitHub Pages article
+    normal-vs-hdr.md        ← comparison table (deep)
+    attributes-hdr-patch.md ← force HDR=1 in attributes.xml before launch
+    wine-system-tray.md     ← hide Wine tray icon (never close it)
+    troubleshooting.md      ← sticky keys, alt-tab mouse, monitors
   LICENSE
 ```
+
+## Topics covered for other users
+
+1. **Normal vs HDR launch** — keep `DISPLAY` (X11) vs unset `DISPLAY` (winewayland).  
+2. **Pre-launch `attributes.xml` patch** — force `HDR=1` (and clear it on SDR) so the client boots correctly; don’t rely only on the in-game toggle.  
+3. **Wine System Tray** — hide the floating tray / task icon; **never close** it or RSI Launcher may crash.  
+4. **Alt-tab mouse** — `IgnoreWindowFocus=0`.  
+5. **Sticky Alt / keyboard** — tradeoff of winewayland vs X11.
 
 ## Enabling GitHub Pages (later)
 

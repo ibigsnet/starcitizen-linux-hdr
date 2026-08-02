@@ -105,46 +105,64 @@ unset SDL_VIDEODRIVER
 export DXVK_HDR=1
 ```
 
-### 4. Patch `attributes.xml` before launch (all channels you use)
+### 4. Patch `attributes.xml` **before** RSI Launcher starts the game
 
-Star Citizen stores the HDR toggle in the profile, e.g.:
+This is a core workaround: **do not rely on toggling HDR only inside the client** after boot on Linux.
+
+Star Citizen reads profile graphics flags from disk when the **game client** starts, for example:
 
 ```text
 …/StarCitizen/<LIVE|PTU|…>/user/Client/0/Profiles/default/attributes.xml
 ```
 
-On **HDR** launch we set:
+Our launcher **rewrites that file for every channel** (LIVE, PTU, EPTU, …) *before* `RSI Launcher.exe` runs:
 
-| Attribute | Value | Why |
-|-----------|--------|-----|
-| `HDR` | `1` | Game-side HDR flag |
-| `Width` / `Height` | e.g. `3840` / `2160` | Stable fullscreen (optional; override with env) |
-| `IgnoreWindowFocus` | `0` | Stop mouse look when alt-tabbed (ships spinning on desktop) |
+```text
+sc-launch-hdr.sh
+  → SC_HDR=1
+  → sed/patch attributes.xml  (HDR=1, resolution, IgnoreWindowFocus)
+  → unset DISPLAY + DXVK_HDR=1
+  → start RSI Launcher
+  → user hits Launch → client already sees HDR=1
+```
 
-On **normal** launch we set:
+| Attribute | HDR launch | Normal launch | Why force it |
+|-----------|------------|---------------|--------------|
+| **`HDR`** | **`1`** | **`0`** | Game-side HDR flag. Leftover `1` after an HDR session can break SDR launches; leftover `0` means the client may boot without HDR even if DXVK is ready. |
+| **`Width` / `Height`** | e.g. **3840×2160** (optional pin) | leave / user choice | Stable fullscreen on a 4K HDR panel; override with `SC_ATTR_WIDTH` / `SC_ATTR_HEIGHT`. |
+| **`IgnoreWindowFocus`** | **`0`** | **`0`** | If `1`, mouse look continues while alt-tabbed (ships spin on the desktop). |
 
-| Attribute | Value | Why |
-|-----------|--------|-----|
-| `HDR` | `0` | Leftover `HDR=1` from an HDR session can break SDR launches |
-| `IgnoreWindowFocus` | `0` | Same alt-tab mouse issue |
-
-Example snippets:
+Example fragment after an HDR pre-patch:
 
 ```xml
 <Attr name="HDR" value="1"/>
+<Attr name="HDRMaxBrightness" value="1000"/>
+<Attr name="HDRRefWhite" value="250"/>
 <Attr name="Width" value="3840"/>
 <Attr name="Height" value="2160"/>
 <Attr name="IgnoreWindowFocus" value="0"/>
 ```
 
-Optional env overrides we use:
+**Safety:** keep a backup (e.g. `attributes.xml.hdr-bak`) on first edit. Patch **all channels you play** (LIVE and PTU are separate trees).
 
-```bash
-SC_ATTR_WIDTH=3840 SC_ATTR_HEIGHT=2160 ./sc-launch-hdr.sh
-SC_IGNORE_WINDOW_FOCUS=0 ./sc-launch-hdr.sh   # default
-```
+Deep dive: [attributes-hdr-patch.md](attributes-hdr-patch.md).
 
-### 5. Reduce input-method interference
+### 5. Hide the Wine System Tray (task icon) — do **not** close it
+
+On HDR/winewayland especially, Wine often shows a floating **“Wine System Tray”** (extra panel/task icon).
+
+| Do | Don’t |
+|----|--------|
+| Minimize / skip taskbar / opacity 0 via **KWin window rule** | Click the tray window’s **X** / destroy the window |
+| Re-apply hide a few seconds after Electron starts (tray is late) | `kill` explorer / tray process in the prefix |
+
+**Why:** Closing that tray window can destroy HWNDs Electron still uses → **RSI Launcher hard-crashes**. Hiding keeps the process and HWND alive.
+
+We schedule delayed hide passes (e.g. 2s, 5s, 10s, …) after launch and keep a permanent KWin rule for title `Wine System Tray`.
+
+Deep dive: [wine-system-tray.md](wine-system-tray.md).
+
+### 6. Reduce input-method interference
 
 Hold-to-compose / IME popups under Wine are painful in cockpit:
 
@@ -156,11 +174,11 @@ export XMODIFIERS=
 export GLFW_IM_MODULE=
 ```
 
-### 6. Launch RSI Launcher with the same Wine prefix
+### 7. Launch RSI Launcher with the same Wine prefix
 
-Same as LUG: run `RSI Launcher.exe` from the prefix after the env/attributes steps. Game starts from the launcher as usual.
+Same as LUG: run `RSI Launcher.exe` from the prefix **after** env + attributes + tray hide setup. Game starts from the launcher as usual.
 
-### 7. Confirm HDR in-game
+### 8. Confirm HDR in-game
 
 - Desktop looks HDR-capable (bright UI, PQ/HDR curve on the panel).
 - In SC graphics options, HDR is on and peak brightness matches your panel (e.g. ~1000 nits).

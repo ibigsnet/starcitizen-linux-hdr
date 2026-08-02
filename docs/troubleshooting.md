@@ -5,8 +5,14 @@
 1. Confirm Plasma (or DE) **HDR is on** for that monitor.  
 2. Confirm the **Wine process** has **no** `DISPLAY` in its environment when using the HDR launcher.  
 3. Confirm `DXVK_HDR=1`.  
-4. Confirm `attributes.xml` has `HDR=1` **before** starting the client.  
+4. Confirm `attributes.xml` has `HDR=1` **before** starting the client (see [attributes-hdr-patch.md](attributes-hdr-patch.md)).  
 5. Avoid “enable HDR only inside the game” on the **normal** X11 path — that is where freezes showed up for us.
+
+## Floating “Wine System Tray” / extra task icon
+
+- **Hide** it (KWin rule: minimize, skip taskbar, opacity 0).  
+- **Do not close** it — can crash RSI Launcher (HWND).  
+- Details: [wine-system-tray.md](wine-system-tray.md).
 
 ## Freezes when enabling HDR in-game
 
