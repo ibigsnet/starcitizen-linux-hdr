@@ -33,6 +33,7 @@ starcitizen-linux-hdr/
     index.md                ← main GitHub Pages article
     normal-vs-hdr.md        ← comparison table (deep)
     steamvr.md              ← Steam hide vs SteamVR/OpenVR opt-in
+    displays-resolutions.md ← landscape primary, winewayland modes, AutoDetect
     attributes-hdr-patch.md ← force HDR=1 in attributes.xml before launch
     wine-system-tray.md     ← hide Wine tray icon (never close it)
     troubleshooting.md      ← sticky keys, alt-tab mouse, monitors, VR
@@ -46,7 +47,8 @@ starcitizen-linux-hdr/
 3. **Wine System Tray** — hide the floating tray / task icon; **never close** it (HWND crash risk, and full exit if RSI “exit on close” is on).  
 4. **Alt-tab mouse** — `IgnoreWindowFocus=0`.  
 5. **Sticky Alt / keyboard** — tradeoff of winewayland vs X11.  
-6. **SteamVR / OpenVR** — hide Steam by default (launcher crash); opt in with `SC_STEAMVR=1` (keep `DISPLAY`, no Steam tmpfs). HDR winewayland and SteamVR do not share one process tree.
+6. **SteamVR / OpenVR** — hide Steam by default (launcher crash); opt in with `SC_STEAMVR=1` (keep `DISPLAY`, no Steam tmpfs). HDR winewayland and SteamVR do not share one process tree.  
+7. **Displays / resolution** — pick largest **landscape** output (not `DP-*` / `screen=0`); `WAYLANDDRV_PRIMARY_MONITOR`; don’t force native WxH every boot; keep `AutoDetect=0` or quality resets.
 
 ## Enabling GitHub Pages (later)
 

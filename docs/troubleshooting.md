@@ -31,10 +31,12 @@ Once you are already on that HDR launch, **enable/disable in the graphics menu i
 `IgnoreWindowFocus` must be `0`.  
 If it is `1`, SC intentionally keeps input while unfocused.
 
-## Wrong monitor
+## Wrong monitor / wrong resolution list
 
-Do not rely only on KWin `screen=0` / `screen=1` (order changes after reboot).  
-Prefer “largest **landscape** output” or an explicit connector name you verify each session (`kscreen-doctor -o`).
+Do not rely only on KWin `screen=0` / `screen=1` (order changes after reboot) or a remembered `DP-*` name.  
+Prefer “largest **landscape** output” (width > height, biggest area). On winewayland set `WAYLANDDRV_PRIMARY_MONITOR` to that connector or you only get the portrait panel’s modes.  
+Do not force `Width`/`Height` to native every launch. Keep `AutoDetect=0` or the next boot wipes `SysSpec_*`.  
+Details: [displays-resolutions.md](displays-resolutions.md).
 
 ## Gamescope + HDR
 

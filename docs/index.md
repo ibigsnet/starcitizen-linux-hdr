@@ -223,6 +223,22 @@ That is incompatible with the winewayland HDR trick in the same process. Full wr
 
 ---
 
+## Displays and resolution (mixed portrait + landscape)
+
+Winewayland’s primary is often the output at **(0,0)** — frequently a **portrait** side panel — so the client only lists that panel’s modes. KWin `screen=0` also **reorders after reboot**.
+
+Practical extras:
+
+- Pick the **largest landscape** output by geometry (not connector name).  
+- Set **`WAYLANDDRV_PRIMARY_MONITOR`** to that connector on the HDR path.  
+- Do **not** rewrite `Width`/`Height` to panel native every launch (that wipes in-game res).  
+- Keep **`AutoDetect=0`** after the client exits; Fast Shutdown writes `AutoDetect=1` and the next boot re-detects quality.  
+- Exclusive fullscreen (`WindowMode=1`) binds 0,0; prefer **borderless** (`2`) on mixed setups.
+
+Full write-up: **[displays-resolutions.md](displays-resolutions.md)**.
+
+---
+
 ## Optional: gamescope HDR (separate path)
 
 Some setups use **gamescope** with `--hdr-enabled` (and friends) instead of pure winewayland.
@@ -330,4 +346,4 @@ If you hit the same “normal works, HDR does not” pattern on another distro/c
 - Whether `attributes.xml` has `HDR=1`  
 - Freeze vs black screen vs SDR-looking image  
 
-See also: [normal-vs-hdr.md](normal-vs-hdr.md), [steamvr.md](steamvr.md), [troubleshooting.md](troubleshooting.md).
+See also: [normal-vs-hdr.md](normal-vs-hdr.md), [steamvr.md](steamvr.md), [displays-resolutions.md](displays-resolutions.md), [troubleshooting.md](troubleshooting.md).

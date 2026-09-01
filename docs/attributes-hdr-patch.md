@@ -25,8 +25,9 @@ Therefore the launcher script **edits `attributes.xml` on disk before** RSI Laun
 | Attribute | Forced value | Purpose |
 |-----------|--------------|---------|
 | `HDR` | `1` | Game-side HDR enabled at boot |
-| `Width` | e.g. `3840` (optional) | Stable fullscreen resolution |
-| `Height` | e.g. `2160` (optional) | Same |
+| `Width` / `Height` | **Optional** — only if you opt in | Forcing panel native every boot **wipes** in-game resolution; see [displays-resolutions.md](displays-resolutions.md) |
+| `WindowMode` | If `1`, coerce to `2` on HDR | Exclusive FS binds Wine (0,0) (often portrait) |
+| `AutoDetect` | `0` | `1` re-detects and overwrites quality on next start |
 | `IgnoreWindowFocus` | `0` (default) | Don’t keep mouse-look when alt-tabbed |
 
 Also set in the environment (not in XML):
