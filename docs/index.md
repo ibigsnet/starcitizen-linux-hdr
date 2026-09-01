@@ -1,6 +1,6 @@
 # Star Citizen on Linux: making HDR actually work
 
-> Community write-up: **SDR/X11 “normal” launch** vs **HDR/winewayland launch**.  
+> Community write-up: **SDR/X11 “normal” launch** vs **HDR/winewayland launch** vs **SteamVR/OpenVR**.  
 > Environment reference: **KDE Plasma Wayland**, **NVIDIA**, **Wine (LUG-style prefix)**, **DXVK**, RSI Launcher.
 
 ---
@@ -35,6 +35,7 @@ What we observed:
 | **IgnoreWindowFocus** | Prefer **`0`** (don’t keep reading mouse when alt-tabbed) | same |
 | **Keyboard** | Better under Wine X11 | Can get **sticky Alt / modifiers** on winewayland |
 | **Gamescope** | Optional separate script | Optional; pure HDR path does **not** need gamescope |
+| **Steam / OpenVR** | **Hidden** (tmpfs over Steam dir) so RSI does not auto-start `vrserver` | Same hide — **HDR is not the VR path** |
 | **In-game HDR toggle** | Often broken / freezes | **Works** — enable/disable between HDR and SDR freely once this path is correct |
 
 ### Mental model
@@ -83,7 +84,7 @@ These are the steps encoded in our `sc-launch-hdr.sh` + `sc-launch.sh` when `SC_
 
 ```bash
 export SC_HDR=1
-export SC_STEAMVR=0   # SteamVR keeps DISPLAY; skip for pure HDR
+export SC_STEAMVR=0   # SteamVR keeps DISPLAY; skip for pure HDR (see steamvr.md)
 # optional: remember X display for host tools only
 export SC_X11_DISPLAY="${DISPLAY:-:0}"
 ```
@@ -208,6 +209,20 @@ You can still export `DXVK_HDR=1` in the shared script; without winewayland + co
 
 ---
 
+## SteamVR / OpenVR (third path)
+
+Default and HDR launches **hide the host Steam directory** from Wine (empty tmpfs bind). That stops RSI Launcher from loading `steamclient` and auto-starting **`vrserver`**, which has taken down the launcher on Plasma Wayland.
+
+To **hook VR**:
+
+1. Do **not** hide Steam.  
+2. **Keep `DISPLAY`** — SteamVR’s `vrserver` still wants X11.  
+3. Use a dedicated env (we use `SC_STEAMVR=1`) so this is not mixed with `unset DISPLAY` HDR.
+
+That is incompatible with the winewayland HDR trick in the same process. Full write-up: **[steamvr.md](steamvr.md)**.
+
+---
+
 ## Optional: gamescope HDR (separate path)
 
 Some setups use **gamescope** with `--hdr-enabled` (and friends) instead of pure winewayland.
@@ -251,6 +266,9 @@ Notes from our machine:
 | HDR launch, compositor HDR on | Real HDR image |
 | HDR launch, disable then re-enable HDR in menu | Works cleanly (true mode switch on winewayland) |
 | HDR launch with `DISPLAY` still set | Behaves like normal (no real HDR / toggle may freeze) |
+| SteamVR launch, Steam dir visible, `DISPLAY` set | OpenVR can init; `vrserver` can run |
+| SteamVR launch but Steam still hidden | OpenVR “failed to locate module” / no runtime |
+| HDR + SteamVR flags together | VR wins on `DISPLAY`; not a true winewayland HDR session |
 | Alt-tab with `IgnoreWindowFocus=0` | Mouse does not turn ship |
 | Alt-tab with `IgnoreWindowFocus=1` | Mouse still turns ship |
 
@@ -279,6 +297,15 @@ export DXVK_HDR=1
 # start RSI Launcher with Wine from the prefix
 ```
 
+**SteamVR:**
+
+```bash
+#!/usr/bin/env bash
+export SC_STEAMVR=1
+# Do not unset DISPLAY. Do not hide ~/.local/share/Steam.
+exec ./sc-launch.sh "$@"
+```
+
 Exact scripts live in your Wine prefix / LUG install; this repo documents **behavior**, not a full re-ship of proprietary game files.
 
 ---
@@ -289,6 +316,7 @@ Exact scripts live in your Wine prefix / LUG install; this repo documents **beha
 - [LUG Helper](https://github.com/starcitizen-lug/lug-helper)  
 - DXVK HDR / Vulkan color space docs (upstream DXVK)  
 - KDE Plasma HDR display settings  
+- SteamVR / OpenVR on Linux (Valve runtime; keep `DISPLAY` for `vrserver`)  
 
 ---
 
@@ -302,4 +330,4 @@ If you hit the same “normal works, HDR does not” pattern on another distro/c
 - Whether `attributes.xml` has `HDR=1`  
 - Freeze vs black screen vs SDR-looking image  
 
-See also: [normal-vs-hdr.md](normal-vs-hdr.md), [troubleshooting.md](troubleshooting.md).
+See also: [normal-vs-hdr.md](normal-vs-hdr.md), [steamvr.md](steamvr.md), [troubleshooting.md](troubleshooting.md).

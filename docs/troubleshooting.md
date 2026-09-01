@@ -38,4 +38,11 @@ Prefer “largest **landscape** output” or an explicit connector name you veri
 
 ## Gamescope + HDR
 
-Treat as a **third** path. Nested HDR under KWin can crash depending on resolution/output. If pure winewayland HDR works, prefer it for reliability.
+Treat as a **separate** path. Nested HDR under KWin can crash depending on resolution/output. If pure winewayland HDR works, prefer it for reliability.
+
+## SteamVR / OpenVR
+
+- **Launcher crash / Web Thread** on a 2D launch: Steam is visible to Wine. Hide `$HOME/.local/share/Steam` (tmpfs bind) unless you opted into VR.  
+- **Headset not seen / OpenVR failed to locate module:** you hid Steam, or `DISPLAY` is unset (HDR winewayland). Use the SteamVR path: Steam visible + `DISPLAY` kept.  
+- **Want HDR and VR together:** not the same process. HDR unsets `DISPLAY`; `vrserver` wants it set. See [steamvr.md](steamvr.md).  
+- Start **SteamVR on the host** before (or able to start with) the RSI launcher.
