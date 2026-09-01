@@ -1,12 +1,12 @@
 # Star Citizen on Linux: HDR (and SteamVR) launch workarounds
 
-Practical notes from running **Star Citizen** under **Wine (LUG / XL-style prefix)** on **Fedora/Nobara + KDE Plasma Wayland**, with **NVIDIA** and a real HDR display.
+Practical notes for **Star Citizen** under **Wine (LUG / XL-style prefix)** on **KDE Plasma Wayland**: real **HDR**, **SteamVR**, and **multi-GPU** (NVIDIA render + AMD display).
 
-This is **not** an official CIG or LUG guide. It documents what broke for us when “normal” (SDR/X11) launch looked fine but **in-game HDR did not**, how **SteamVR/OpenVR** is hooked without letting RSI auto-start `vrserver` on every 2D launch, and what we changed so those paths work.
+This is **not** an official CIG or LUG guide. It is what works: winewayland HDR vs X11 “normal,” SteamVR without letting RSI auto-start `vrserver` on every 2D launch, and PRIME device filters so DLSS lands on the right GPU.
 
 | | |
 |--|--|
-| **Audience** | Linux SC players who want real HDR (not just a bright SDR image), or SteamVR without launcher crashes |
+| **Audience** | Linux SC players who want real HDR, SteamVR without launcher crashes, or NVIDIA render with the panel on another GPU |
 | **Stack tested** | KDE Plasma Wayland, NVIDIA render + AMD display (PRIME), Wine-tkg LUG runner, DXVK, RSI Launcher, SteamVR |
 | **Companion** | Compare **normal** vs **HDR** vs **SteamVR** launch |
 
@@ -33,8 +33,8 @@ starcitizen-linux-hdr/
     index.md                ← main GitHub Pages article
     normal-vs-hdr.md        ← comparison table (deep)
     steamvr.md              ← Steam hide vs SteamVR/OpenVR opt-in
-    displays-resolutions.md ← landscape primary, winewayland modes, AutoDetect
-    multi-gpu.md            ← NVIDIA render + AMD display, DXVK_FILTER, no ICD-only
+    displays-resolutions.md ← landscape primary, winewayland modes
+    multi-gpu.md            ← NVIDIA render + AMD display, DXVK_FILTER
     attributes-hdr-patch.md ← force HDR=1 in attributes.xml before launch
     wine-system-tray.md     ← hide Wine tray icon (never close it)
     troubleshooting.md      ← sticky keys, alt-tab mouse, monitors, VR
@@ -49,7 +49,7 @@ starcitizen-linux-hdr/
 4. **Alt-tab mouse** — `IgnoreWindowFocus=0`.  
 5. **Sticky Alt / keyboard** — tradeoff of winewayland vs X11.  
 6. **SteamVR / OpenVR** — hide Steam by default (launcher crash); opt in with `SC_STEAMVR=1` (keep `DISPLAY`, no Steam tmpfs). HDR winewayland and SteamVR do not share one process tree.  
-7. **Displays / resolution** — pick largest **landscape** output (not `DP-*` / `screen=0`); `WAYLANDDRV_PRIMARY_MONITOR`; don’t force native WxH every boot; keep `AutoDetect=0` or quality resets.  
+7. **Displays / resolution** — largest **landscape** output; `WAYLANDDRV_PRIMARY_MONITOR`; don’t force native WxH every boot; `AutoDetect=0`.  
 8. **Multi-GPU** — render on NVIDIA, present on the card with the plugs; filter by device **name**, keep both Vulkan ICDs.
 
 ## Enabling GitHub Pages (later)
@@ -61,4 +61,4 @@ starcitizen-linux-hdr/
 
 ## Status
 
-Living notes from one machine (Nobara / Plasma / RTX 5090 / MSI 4K HDR). Adapt paths and display names to your setup.
+Living notes. Adapt paths, GPU names, and connectors to your setup.

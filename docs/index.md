@@ -225,15 +225,12 @@ That is incompatible with the winewayland HDR trick in the same process. Full wr
 
 ## Displays and resolution (mixed portrait + landscape)
 
-Winewayland’s primary is often the output at **(0,0)** — frequently a **portrait** side panel — so the client only lists that panel’s modes. KWin `screen=0` also **reorders after reboot**.
+Winewayland’s primary is often the output at **(0,0)** — frequently a **portrait** side panel — so the client only lists that panel’s modes.
 
-Practical extras:
-
-- Pick the **largest landscape** output by geometry (not connector name).  
+- Pick the **largest landscape** output by geometry (not connector name / `screen=0`).  
 - Set **`WAYLANDDRV_PRIMARY_MONITOR`** to that connector on the HDR path.  
-- Do **not** rewrite `Width`/`Height` to panel native every launch (that wipes in-game res).  
-- Keep **`AutoDetect=0`** after the client exits; Fast Shutdown writes `AutoDetect=1` and the next boot re-detects quality.  
-- Exclusive fullscreen (`WindowMode=1`) binds 0,0; prefer **borderless** (`2`) on mixed setups.
+- Do **not** rewrite `Width`/`Height` to panel native every launch.  
+- Keep **`AutoDetect=0`**. Prefer **borderless** (`WindowMode=2`) over exclusive fullscreen on mixed setups.
 
 Full write-up: **[displays-resolutions.md](displays-resolutions.md)**.
 
@@ -253,14 +250,7 @@ Full write-up: **[multi-gpu.md](multi-gpu.md)**.
 
 ## Optional: gamescope HDR (separate path)
 
-Some setups use **gamescope** with `--hdr-enabled` (and friends) instead of pure winewayland.
-
-Notes from our machine:
-
-- Nested gamescope under KDE can be picky about **which output** (`-O DP-3`, display index).
-- High supersample + HDR flags has crashed under KWin/NVIDIA for us.
-- Pure **`sc-launch-hdr.sh`** remains the simpler “real HDR” path.
-- `--force-grab-cursor` is a **gamescope** option only (cursor capture). The pure HDR script does **not** set it.
+Some setups use **gamescope** with `--hdr-enabled` instead of pure winewayland. Nested gamescope under KDE can be picky about output (`-O`, display index). Pure winewayland (`unset DISPLAY`) is the simpler HDR path here; treat gamescope as optional. `--force-grab-cursor` is a **gamescope** option only.
 
 ---
 
