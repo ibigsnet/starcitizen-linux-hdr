@@ -239,6 +239,18 @@ Full write-up: **[displays-resolutions.md](displays-resolutions.md)**.
 
 ---
 
+## Multi-GPU (render vs display)
+
+If the **panel is on AMD** (or an iGPU) and you want **NVIDIA** for the game (DLSS), DXVK/Vulkan will still pick the **display** adapter unless you filter.
+
+- Set `DXVK_FILTER_DEVICE_NAME` / `VKD3D_FILTER_DEVICE_NAME` to the **render** GPU’s `vulkaninfo` name.  
+- **Do not** set `VK_ICD_FILENAMES` to NVIDIA-only — winewayland needs the **display** ICD to present.  
+- If the NVIDIA kmod is missing, that filter makes **RSI Launcher** die with `DXVK: No adapters found`.
+
+Full write-up: **[multi-gpu.md](multi-gpu.md)**.
+
+---
+
 ## Optional: gamescope HDR (separate path)
 
 Some setups use **gamescope** with `--hdr-enabled` (and friends) instead of pure winewayland.
@@ -346,4 +358,4 @@ If you hit the same “normal works, HDR does not” pattern on another distro/c
 - Whether `attributes.xml` has `HDR=1`  
 - Freeze vs black screen vs SDR-looking image  
 
-See also: [normal-vs-hdr.md](normal-vs-hdr.md), [steamvr.md](steamvr.md), [displays-resolutions.md](displays-resolutions.md), [troubleshooting.md](troubleshooting.md).
+See also: [normal-vs-hdr.md](normal-vs-hdr.md), [steamvr.md](steamvr.md), [displays-resolutions.md](displays-resolutions.md), [multi-gpu.md](multi-gpu.md), [troubleshooting.md](troubleshooting.md).

@@ -42,6 +42,13 @@ Details: [displays-resolutions.md](displays-resolutions.md).
 
 Treat as a **separate** path. Nested HDR under KWin can crash depending on resolution/output. If pure winewayland HDR works, prefer it for reliability.
 
+## Wrong GPU / no DLSS / launcher “No adapters found”
+
+Displays on AMD, game should be NVIDIA: if `Game.log` chose RADV, the device **filter** is missing or the NVIDIA driver is not loaded.  
+Do **not** set `VK_ICD_FILENAMES` to NVIDIA-only (winewayland still needs RADV to present).  
+RSI Launcher is DXVK: a NVIDIA-only filter with no NVIDIA ICD → `Failed to initialize DXVK`.  
+Details: [multi-gpu.md](multi-gpu.md).
+
 ## SteamVR / OpenVR
 
 - **Launcher crash / Web Thread** on a 2D launch: Steam is visible to Wine. Hide `$HOME/.local/share/Steam` (tmpfs bind) unless you opted into VR.  

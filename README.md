@@ -7,7 +7,7 @@ This is **not** an official CIG or LUG guide. It documents what broke for us whe
 | | |
 |--|--|
 | **Audience** | Linux SC players who want real HDR (not just a bright SDR image), or SteamVR without launcher crashes |
-| **Stack tested** | KDE Plasma Wayland, NVIDIA, Wine-tkg LUG runner, DXVK, RSI Launcher, SteamVR |
+| **Stack tested** | KDE Plasma Wayland, NVIDIA render + AMD display (PRIME), Wine-tkg LUG runner, DXVK, RSI Launcher, SteamVR |
 | **Companion** | Compare **normal** vs **HDR** vs **SteamVR** launch |
 
 → **Full write-up for GitHub Pages:** [docs/index.md](docs/index.md)
@@ -34,6 +34,7 @@ starcitizen-linux-hdr/
     normal-vs-hdr.md        ← comparison table (deep)
     steamvr.md              ← Steam hide vs SteamVR/OpenVR opt-in
     displays-resolutions.md ← landscape primary, winewayland modes, AutoDetect
+    multi-gpu.md            ← NVIDIA render + AMD display, DXVK_FILTER, no ICD-only
     attributes-hdr-patch.md ← force HDR=1 in attributes.xml before launch
     wine-system-tray.md     ← hide Wine tray icon (never close it)
     troubleshooting.md      ← sticky keys, alt-tab mouse, monitors, VR
@@ -48,7 +49,8 @@ starcitizen-linux-hdr/
 4. **Alt-tab mouse** — `IgnoreWindowFocus=0`.  
 5. **Sticky Alt / keyboard** — tradeoff of winewayland vs X11.  
 6. **SteamVR / OpenVR** — hide Steam by default (launcher crash); opt in with `SC_STEAMVR=1` (keep `DISPLAY`, no Steam tmpfs). HDR winewayland and SteamVR do not share one process tree.  
-7. **Displays / resolution** — pick largest **landscape** output (not `DP-*` / `screen=0`); `WAYLANDDRV_PRIMARY_MONITOR`; don’t force native WxH every boot; keep `AutoDetect=0` or quality resets.
+7. **Displays / resolution** — pick largest **landscape** output (not `DP-*` / `screen=0`); `WAYLANDDRV_PRIMARY_MONITOR`; don’t force native WxH every boot; keep `AutoDetect=0` or quality resets.  
+8. **Multi-GPU** — render on NVIDIA, present on the card with the plugs; filter by device **name**, keep both Vulkan ICDs.
 
 ## Enabling GitHub Pages (later)
 

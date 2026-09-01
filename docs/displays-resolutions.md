@@ -110,11 +110,11 @@ RSI Launcher does not need to live on the play panel. Only the **game client** d
 
 ---
 
-## Dual GPU (PRIME), briefly
+## Dual GPU (PRIME)
 
-If **displays are on GPU A** and the game **renders on GPU B**, Vulkan device filters (`DXVK_FILTER_DEVICE_NAME` / `VKD3D_FILTER_DEVICE_NAME`) must name the **render** GPU. Winewayland still needs the **display** GPU’s ICD to present. Do not set `VK_ICD_FILENAMES` to the render GPU only.
+If **displays are on GPU A** and the game **renders on GPU B**, that is a **device filter** problem, not a monitor-pick problem. Full write-up: **[multi-gpu.md](multi-gpu.md)**.
 
-That is independent of “which monitor,” but it is why a 4K/ultrawide mode list can appear while the compositor is scanning out on the other card.
+Short version: `DXVK_FILTER_DEVICE_NAME` / `VKD3D_FILTER_DEVICE_NAME` name the **render** GPU; do **not** set `VK_ICD_FILENAMES` to that GPU only — winewayland still needs the **display** ICD.
 
 ---
 
@@ -134,4 +134,5 @@ That is independent of “which monitor,” but it is why a 4K/ultrawide mode li
 - [index.md](index.md) — HDR vs normal  
 - [attributes-hdr-patch.md](attributes-hdr-patch.md) — `HDR=1` / `HDR=0`  
 - [steamvr.md](steamvr.md) — `DISPLAY` kept for VR  
+- [multi-gpu.md](multi-gpu.md) — render GPU vs display GPU  
 - [troubleshooting.md](troubleshooting.md)  
