@@ -103,16 +103,6 @@ Confirm in `Game.log`: `Chosen Vulkan GPU Device (NVIDIA …)` and `DLSS initial
 
 ---
 
-## Present path (don’t confuse with GPU load)
-
-- **Render GPU** at high SM% / watts: drawing the game.  
-- **Display GPU** busy compositing the fullscreen window: **expected** with PRIME.  
-- Capture (full-desktop recorder on the play output) can peg the **display** GPU; that is not the render card “failing.”
-
-x8 vs x16 PCIe on both slots is a bandwidth ceiling for huge present formats (e.g. FP16 ultrawide). It does not replace device filters.
-
----
-
 ## Overlay GPU order
 
 MangoHud 0.8 indexes GPUs by sorted DRM `renderD*` nodes, which **shuffle** when NVIDIA binds late. Label strings (`gpu_text`) must follow a **stable order** (e.g. NVIDIA dGPU → other dGPU → iGPU), with `gpu_list` remapped to those indices at session start. See your overlay docs; do not assume index `0` is NVIDIA.
